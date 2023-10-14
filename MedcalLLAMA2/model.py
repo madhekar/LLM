@@ -6,6 +6,7 @@ from langchain.chains import RetrievalQA
 from ctransformers import AutoModelForCausalLM
 import chainlit as cl
 import os
+
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 DB_FAISS_PATH = "vectorstores/db_faiss"
@@ -28,7 +29,7 @@ def set_custom_prompt():
 
     return prompt
 
-#Loading the model
+# Loading the model 4bit quantized model for Llama make it running on 16GB ram
 def load_llm():
     # Load the locally downloaded model here
     llm = CTransformers(

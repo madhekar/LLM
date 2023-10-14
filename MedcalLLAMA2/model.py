@@ -5,6 +5,8 @@ from langchain.llms import CTransformers
 from langchain.chains import RetrievalQA
 from ctransformers import AutoModelForCausalLM
 import chainlit as cl
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 DB_FAISS_PATH = "vectorstores/db_faiss"
 
@@ -26,34 +28,14 @@ def set_custom_prompt():
 
     return prompt
 
-""" def load_llm():
-    llm = CTransformers(
-        model= 'TheBloke/Llama-2-7B-Chat-GGML', 
-        model_type = "llama",
-        max_new_tokens = 512,
-        temperature = 0.5
-    )  
-
-    llm = AutoModelForCausalLM.from_pretrained("TheBloke/Llama-2-7B-Chat-GGML", model_file="llama-2-7b-chat.ggmlv3.q8_0.bin")
-    return llm """
-
-""" def retrieval_qa_chain(llm, prompt, db):
-    qa_chain = RetrievalQA.from_chain_type(llm = llm,
-        chain_type = 'stuff',
-        retriever = db.as_retriever(search_kwargs= {'k': 2} ),
-        return_source_documents = True,
-        chain_type_kwargs = {'prompt' : prompt}
-    )
-    return qa_chain """
-
 #Loading the model
 def load_llm():
     # Load the locally downloaded model here
     llm = CTransformers(
         model = "TheBloke/Llama-2-7B-Chat-GGML",
         model_type="llama",
-        max_new_tokens = 512,
-        temperature = 0.5
+        max_new_tokens = 256,
+        temperature = 0.3
     )
     return llm
 
@@ -84,9 +66,9 @@ def final_result(query):
 @cl.on_chat_start
 async def start():
     chain = qa_bot()
-    msg = cl.Message(content="Starting the bot....")
+    msg = cl.Message(content="Starting the service bot....")
     await msg.send()
-    msg.content = "Hi, Welcom to Medical Query Service. What is your question?"
+    msg.content = "<< Medical Query Service >>"
     await msg.update()
     cl.user_session.set('chain', chain)
 

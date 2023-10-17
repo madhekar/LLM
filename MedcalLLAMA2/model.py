@@ -42,7 +42,7 @@ def load_llm():
 
 def retrieval_qa_chain(llm, prompt, db):
     qa_chain = RetrievalQA.from_chain_type(llm=llm,
-                                       chain_type='stuff',
+                                       chain_type='Medical_Books',
                                        retriever=db.as_retriever(search_kwargs={'k': 2}),
                                        return_source_documents=True,
                                        chain_type_kwargs={'prompt': prompt}

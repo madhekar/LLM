@@ -4,7 +4,7 @@ import torchvision.transforms.functional as TF
 
 '''
 implement double convolution in as class 
-just to save repetition
+just to save from code repetition
 '''
 class DConv(nn.Module):
     def __init__(self, ichans, ochans):

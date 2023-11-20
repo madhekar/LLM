@@ -74,6 +74,7 @@ class Unet(nn.Module):
 
             return self.final(a)     
 
+# define sample very basic test just to verify
 def test():
      z = torch.randn((3, 1, 160, 160))
      model = Unet(ichans=1, ochans=1)
@@ -84,5 +85,6 @@ def test():
 
      assert preds.shape == z.shape
 
+# test the model architecture
 if __name__=='__main__':
     test()     

@@ -7,10 +7,11 @@ from transformers import pipeline
 
 class ABSA():
     def __init__(self):
-        self.tokenizer = AutoTokenizer.from_pretrained("yangheng/deberta-v3-base-absa-v1.1")
+        self.tokenizer = AutoTokenizer.from_pretrained("yangheng/deberta-v3-base-absa-v1.1",truncation=True, max_length=512)
         self.absa_model = AutoModelForSequenceClassification.from_pretrained("yangheng/deberta-v3-base-absa-v1.1")
         self.classifier = pipeline("text-classification", model=self.absa_model, tokenizer=self.tokenizer)
-
+        self.zero_pipe = pipeline("zero-shot-classification",model=self.absa_model, tokenizer=self.tokenizer)
+   
     def getAspectScoring(self, aspect, text):
         input = self.tokenizer(f"[CLS] {text} [SEP] {aspect} [SEP]", return_tensors="pt")
         outputs = self.absa_model(**input)
@@ -23,11 +24,15 @@ class ABSA():
         print(f"Sentiment of {aspect}: ")
         for prob, label in zip(probs, ["neg", "neu", "pos"]):
             print (f"Label {label}: {prob}")
-        print("*****")
 
     def getMAspects(self, aspects, text):
+        print("*****")
         for aspect in aspects:
             print(aspect, self.classifier(text, text_pair=aspect))
+
+    def getMZAspects(self, aspects, text):
+        print("*****")
+        print(self.zero_pipe(text, candidate_labels=aspects))
 
 if __name__=="__main__":
     absa = ABSA()
@@ -38,4 +43,7 @@ if __name__=="__main__":
 
     # multiple aspects in list
     absa.getMAspects(aspects=["food", "service"], text=text)
+
+    # zero shor classification
+    absa.getMZAspects(aspects=["food", "service"], text=text)
 

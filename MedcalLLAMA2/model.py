@@ -42,7 +42,7 @@ def load_llm():
 
 def retrieval_qa_chain(llm, prompt, db):
     qa_chain = RetrievalQA.from_chain_type(llm=llm,
-                                       chain_type='Medical_Books',
+                                       chain_type='stuff',
                                        retriever=db.as_retriever(search_kwargs={'k': 2}),
                                        return_source_documents=True,
                                        chain_type_kwargs={'prompt': prompt}
@@ -80,7 +80,7 @@ async def main(message):
         stream_final_answer = True, answer_prefix_tokens = ["FINAL", "ANSWER"]
     ) 
     cb.answer_reached=True
-    res = await chain.acall(message, callbacks=[cb])
+    res = await chain.acall(message.content, callbacks=[cb])
     answer = res["result"]
     sources = res["source_documents"] 
 

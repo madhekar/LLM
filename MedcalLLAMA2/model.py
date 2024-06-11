@@ -1,5 +1,5 @@
 from langchain.prompts import PromptTemplate
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.llms import CTransformers
 from langchain.chains import RetrievalQA
@@ -51,7 +51,7 @@ def retrieval_qa_chain(llm, prompt, db):
 
 def qa_bot():
      embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/all-MiniLM-L6-v2', model_kwargs = {'device':'cpu'})
-     db = FAISS.load_local(DB_FAISS_PATH, embeddings)
+     db = FAISS.load_local(DB_FAISS_PATH, embeddings,embeddings, allow_dangerous_deserialization=True)
      llm = load_llm()
      qa_prompt = set_custom_prompt()
      qa = retrieval_qa_chain(llm, qa_prompt, db)

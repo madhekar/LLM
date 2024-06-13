@@ -33,8 +33,8 @@ def set_custom_prompt():
 def load_llm():
     # Load the locally downloaded model here
     llm = CTransformers(
-        model = "TheBloke/Llama-2-7B-Chat-GGML",
-        model_type="llama",
+        model = "TheBloke/Llama-2-7b-Chat-GGUF", #"TheBloke/Llama-2-7b-Chat.Q4_K_M.gguf",
+        model_type="llama", # model type llama
         max_new_tokens = 100,
         temperature = 0.3
     )
@@ -51,7 +51,7 @@ def retrieval_qa_chain(llm, prompt, db):
 
 def qa_bot():
      embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/all-MiniLM-L6-v2', model_kwargs = {'device':'cpu'})
-     db = FAISS.load_local(DB_FAISS_PATH, embeddings,embeddings, allow_dangerous_deserialization=True)
+     db = FAISS.load_local(DB_FAISS_PATH, embeddings, allow_dangerous_deserialization=True)
      llm = load_llm()
      qa_prompt = set_custom_prompt()
      qa = retrieval_qa_chain(llm, qa_prompt, db)
@@ -81,7 +81,7 @@ async def main(message):
         answer_prefix_tokens = ["FINAL", "ANSWER"]
     ) 
     cb.answer_reached=True
-    res = await chain.acall(message.content, callbacks=[cb])
+    res = await chain.ainvoke(message.content, callbacks=[cb])
     answer = res["result"]
     sources = res["source_documents"] 
 

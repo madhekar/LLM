@@ -3,7 +3,7 @@ from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-DATA_PATH = "data/"
+DATA_PATH = "../../data/software"
 DB_FIASS_PATH = "vectorstores/db_faiss"
 
 def create_vector_db():

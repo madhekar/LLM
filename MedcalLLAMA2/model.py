@@ -1,7 +1,7 @@
 from langchain.prompts import PromptTemplate
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.llms import CTransformers
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.llms import CTransformers
 from langchain.chains import RetrievalQA
 from ctransformers import AutoModelForCausalLM
 import chainlit as cl
@@ -25,18 +25,24 @@ def set_custom_prompt():
     """
     Prompt template for QA retrieval for each vector stores
     """
-    prompt = PromptTemplate(template=custom_prompt_template, input_variables=['context', 'question'])
+    prompt = PromptTemplate(template=custom_prompt_template, 
+                            input_variables=['context', 'question'])
 
     return prompt
 
 # Loading the model 4bit quantized model for Llama make it running on 16GB ram
 def load_llm():
     # Load the locally downloaded model here
+    config = {'max_new_tokens': 100, 
+              'repetition_penalty': 1.1,
+              'temperature': 0.6,
+              'threads': 16,
+              'top_p' : 0.98
+              }
     llm = CTransformers(
         model = "TheBloke/Llama-2-7b-Chat-GGUF", #"TheBloke/Llama-2-7b-Chat.Q4_K_M.gguf",
         model_type="llama", # model type llama
-        max_new_tokens = 100,
-        temperature = 0.3
+        config=config
     )
     return llm
 
@@ -50,8 +56,11 @@ def retrieval_qa_chain(llm, prompt, db):
     return qa_chain
 
 def qa_bot():
-     embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/all-MiniLM-L6-v2', model_kwargs = {'device':'cpu'})
-     db = FAISS.load_local(DB_FAISS_PATH, embeddings, allow_dangerous_deserialization=True)
+     embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/all-MiniLM-L6-v2', 
+                                        model_kwargs = {'device':'cpu'})
+     db = FAISS.load_local(DB_FAISS_PATH, 
+                           embeddings, 
+                           allow_dangerous_deserialization=True)
      llm = load_llm()
      qa_prompt = set_custom_prompt()
      qa = retrieval_qa_chain(llm, qa_prompt, db)
@@ -69,7 +78,7 @@ async def start():
     chain = qa_bot()
     msg = cl.Message(content="Starting the service bot....")
     await msg.send()
-    msg.content = "<< Medical Query Service >>"
+    msg.content = "<< Medical/ Print Query Service >>"
     await msg.update()
     cl.user_session.set('chain', chain)
 

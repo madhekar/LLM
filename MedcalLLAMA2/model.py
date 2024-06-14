@@ -92,11 +92,13 @@ async def main(message):
     cb.answer_reached=True
     res = await chain.ainvoke(message.content, callbacks=[cb])
     answer = res["result"]
+    """     
     sources = res["source_documents"] 
 
     if sources:
         answer += f"\nSources: " + str(sources)
     else:
-        answer += f"\nNo sources found!"
+        answer += f"\nNo sources found!" 
+    """
 
     await cl.Message(content=answer).send()          

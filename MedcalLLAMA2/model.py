@@ -35,8 +35,8 @@ def load_llm():
     # Load the locally downloaded model here
     config = {'max_new_tokens': 100, 
               'repetition_penalty': 1.1,
-              'temperature': 0.6,
-              'threads': 16,
+              'temperature': 0.2,
+              'threads': 8,
               'top_p' : 0.98
               }
     llm = CTransformers(
